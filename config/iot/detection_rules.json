@@ -1,0 +1,254 @@
+{
+  "protocols": {
+    "mqtt": {
+      "name": "MQTT",
+      "description": "Message Queuing Telemetry Transport - IoT messaging protocol",
+      "ports": [1883, 8883],
+      "detection_rules": [
+        {
+          "type": "port",
+          "tcp_ports": [1883, 8883],
+          "description": "Standard MQTT ports"
+        },
+        {
+          "type": "payload_pattern",
+          "pattern": "^\\x10\\x0f\\x00\\x04MQTT\\x04",
+          "description": "MQTT CONNECT packet signature"
+        }
+      ]
+    },
+    "coap": {
+      "name": "CoAP",
+      "description": "Constrained Application Protocol - lightweight IoT protocol",
+      "ports": [5683, 5684],
+      "detection_rules": [
+        {
+          "type": "port",
+          "udp_ports": [5683, 5684],
+          "description": "Standard CoAP ports"
+        },
+        {
+          "type": "payload_pattern",
+          "pattern": "^\\x[4-7][0-3]",
+          "description": "CoAP message header pattern"
+        }
+      ]
+    },
+    "http_iot": {
+      "name": "HTTP-IoT",
+      "description": "HTTP traffic from IoT devices",
+      "ports": [80, 443, 8080],
+      "detection_rules": [
+        {
+          "type": "user_agent",
+          "patterns": [
+            "iot",
+            "esp8266",
+            "esp32",
+            "arduino",
+            "raspberry",
+            "particle",
+            "smartthings",
+            "nest",
+            "ring",
+            "wyze",
+            "tplink"
+          ],
+          "case_insensitive": true,
+          "description": "Common IoT device user agents"
+        },
+        {
+          "type": "endpoint_pattern",
+          "patterns": [
+            "/api/",
+            "/status",
+            "/config",
+            "/control",
+            "/device",
+            "/sensor"
+          ],
+          "description": "Common IoT API endpoints"
+        }
+      ]
+    },
+    "zigbee": {
+      "name": "Zigbee",
+      "description": "Zigbee wireless protocol for IoT devices",
+      "ports": [],
+      "detection_rules": [
+        {
+          "type": "payload_pattern",
+          "pattern": "^\\x[0-1][0-9a-f]{1,2}",
+          "description": "Zigbee frame control field pattern"
+        }
+      ]
+    },
+    "zwave": {
+      "name": "Z-Wave",
+      "description": "Z-Wave wireless protocol for smart home devices",
+      "ports": [],
+      "detection_rules": [
+        {
+          "type": "payload_pattern",
+          "pattern": "^\\x01\\x[89a-f]",
+          "description": "Z-Wave frame header pattern"
+        }
+      ]
+    }
+  },
+  "vulnerabilities": {
+    "unencrypted_mqtt": {
+      "name": "Unencrypted MQTT",
+      "description": "MQTT traffic using unencrypted connection",
+      "severity": "high",
+      "category": "encryption",
+      "protocol": "mqtt",
+      "rules": [
+        {
+          "condition": "port == 1883",
+          "description": "MQTT using default unencrypted port"
+        }
+      ],
+      "recommendation": "Use MQTT over TLS (port 8883) instead of port 1883",
+      "cve_references": []
+    },
+    "unencrypted_coap": {
+      "name": "Unencrypted CoAP",
+      "description": "CoAP traffic using unencrypted UDP connection",
+      "severity": "medium",
+      "category": "encryption",
+      "protocol": "coap",
+      "rules": [
+        {
+          "condition": "port == 5683",
+          "description": "CoAP using default unencrypted port"
+        }
+      ],
+      "recommendation": "Use CoAP over DTLS (port 5684) instead of port 5683",
+      "cve_references": []
+    },
+    "suspicious_endpoint": {
+      "name": "Suspicious API Endpoint",
+      "description": "Access to potentially sensitive API endpoints",
+      "severity": "medium",
+      "category": "access_control",
+      "protocol": "http",
+      "rules": [
+        {
+          "condition": "endpoint matches admin|config|setup|root|system|security|user",
+          "description": "Endpoints that may expose administrative functions"
+        }
+      ],
+      "recommendation": "Verify if this endpoint should be publicly accessible",
+      "cve_references": []
+    },
+    "weak_credentials": {
+      "name": "Weak Authentication",
+      "description": "HTTP Basic Authentication with potentially weak credentials",
+      "severity": "high",
+      "category": "authentication",
+      "protocol": "http",
+      "rules": [
+        {
+          "condition": "authorization_header contains admin:admin|root:root|user:user",
+          "description": "Common default credentials in HTTP Basic Auth"
+        }
+      ],
+      "recommendation": "Change default credentials and use strong passwords",
+      "cve_references": []
+    },
+    "exposed_device_info": {
+      "name": "Device Information Exposure",
+      "description": "IoT device exposing sensitive system information",
+      "severity": "low",
+      "category": "information_disclosure",
+      "protocol": "http",
+      "rules": [
+        {
+          "condition": "endpoint contains system|info|version|status",
+          "description": "Endpoints that may leak device information"
+        },
+        {
+          "condition": "response contains firmware|version|serial|mac",
+          "description": "Response containing sensitive device information"
+        }
+      ],
+      "recommendation": "Limit information disclosure in API responses",
+      "cve_references": []
+    },
+    "unencrypted_iot_comm": {
+      "name": "Unencrypted IoT Communication",
+      "description": "IoT device communicating without encryption",
+      "severity": "medium",
+      "category": "encryption",
+      "protocol": "any",
+      "rules": [
+        {
+          "condition": "protocol in [mqtt, coap, http] and not tls_encrypted",
+          "description": "IoT protocols without TLS/DTLS encryption"
+        }
+      ],
+      "recommendation": "Implement proper encryption for IoT communications",
+      "cve_references": []
+    }
+  },
+  "user_agents": {
+    "iot_devices": [
+      "arduino",
+      "esp8266",
+      "esp32",
+      "raspberry",
+      "particle",
+      "smartthings",
+      "nest",
+      "ring",
+      "wyze",
+      "tplink",
+      "philips-hue",
+      "samsung-smarttv",
+      "roku",
+      "amazon-echo",
+      "google-home",
+      "xiaomi",
+      "huawei-iot",
+      "bosch-iot",
+      "sonos",
+      "lifx"
+    ],
+    "iot_libraries": [
+      "mqtt-client",
+      "coap-client",
+      "aws-iot",
+      "azure-iot",
+      "google-iot",
+      "arduino-http",
+      "esp8266httpclient"
+    ]
+  },
+  "known_vulnerable_endpoints": [
+    "/admin",
+    "/config",
+    "/setup",
+    "/system",
+    "/security",
+    "/user",
+    "/api/admin",
+    "/api/config",
+    "/api/system",
+    "/api/user",
+    "/cgi-bin/admin",
+    "/cgi-bin/config",
+    "/LAPI/V1.1",
+    "/webcam",
+    "/camera",
+    "/video",
+    "/stream"
+  ],
+  "severity_levels": {
+    "critical": 9,
+    "high": 7,
+    "medium": 5,
+    "low": 3,
+    "info": 1
+  }
+}
