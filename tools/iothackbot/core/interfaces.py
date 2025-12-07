@@ -119,7 +119,7 @@ class ConfigBuilder:
         # Extract common args
         input_paths = getattr(args, 'paths', getattr(args, 'path', None))
         if input_paths is None:
-            input_paths = getattr(args, 'target', getattr(args, 'input', getattr(args, 'hostname', getattr(args, 'url', ''))))
+            input_paths = getattr(args, 'target', getattr(args, 'input', getattr(args, 'hostname', getattr(args, 'url', getattr(args, 'binary', '')))))
             if input_paths and not isinstance(input_paths, list):
                 input_paths = [input_paths]
         elif not isinstance(input_paths, list):
@@ -154,6 +154,17 @@ class ConfigBuilder:
             custom_args['show_status'] = args.status
         if hasattr(args, 'profile'):
             custom_args['enable_profiling'] = args.profile
+        # Ghidra-specific args
+        if hasattr(args, 'action'):
+            custom_args['action'] = args.action
+        if hasattr(args, 'function'):
+            custom_args['function'] = args.function
+        if hasattr(args, 'address'):
+            custom_args['address'] = args.address
+        if hasattr(args, 'pattern'):
+            custom_args['pattern'] = args.pattern
+        if hasattr(args, 'ghidra_path'):
+            custom_args['ghidra_path'] = args.ghidra_path
 
         return ToolConfig(
             input_paths=input_paths,
