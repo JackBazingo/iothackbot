@@ -27,6 +27,27 @@ IoTHackBot is a collection of specialized tools and Claude Code skills designed 
   - Extracts ext2/3/4 and F2FS filesystems
   - Designed for firmware analysis
 
+- **ghidra** - Automated binary analysis using Ghidra/PyGhidra
+  - Decompilation to pseudo-C code
+  - Dangerous function detection (strcpy, system, sprintf, etc.)
+  - String extraction with pattern matching
+  - Cross-reference analysis
+  - Supports ARM, MIPS, x86 architectures
+
+### Android/Mobile Analysis
+
+- **apktool** (skill) - Android APK unpacking and resource extraction
+  - Decode APK resources to readable formats
+  - Extract AndroidManifest.xml
+  - Analyze smali bytecode
+  - Repackage modified APKs
+
+- **jadx** (skill) - Android APK decompilation
+  - Convert DEX bytecode to readable Java source
+  - Deobfuscation support
+  - Find hardcoded credentials and API keys
+  - Analyze app logic and control flow
+
 ### Hardware & Console Access
 
 - **picocom** (skill) - IoT UART console interaction for hardware testing
@@ -49,8 +70,15 @@ IoTHackBot is a collection of specialized tools and Claude Code skills designed 
 # Python dependencies
 pip install colorama pyserial pexpect requests
 
+# For binary analysis (ghidra skill)
+pip install pyghidra
+# Also requires Ghidra 11.0+ installed and GHIDRA_INSTALL_DIR set
+
 # System dependencies (Arch Linux)
 sudo pacman -S nmap e2fsprogs f2fs-tools python python-pip inetutils
+
+# For Android analysis (optional)
+sudo pacman -S jadx apktool  # Or install via AUR/manually
 
 # For other distributions, install equivalent packages
 ```
@@ -106,12 +134,36 @@ ffind firmware.bin
 sudo ffind firmware.bin -e
 ```
 
+#### Analyze Binaries
+```bash
+# Quick security triage
+ghidra /path/to/binary --action quick
+
+# Find dangerous function calls
+ghidra /path/to/binary --action dangerous
+
+# Decompile specific function
+ghidra /path/to/binary --action decompile --function main
+```
+
+#### Analyze Android APKs
+```bash
+# Decompile APK to Java source (via jadx skill)
+jadx --deobf app.apk -d app-decompiled
+
+# Extract APK resources (via apktool skill)
+apktool d app.apk -o app-unpacked
+```
+
 ### Claude Code Skills
 
 IoTHackBot includes specialized skills for Claude Code that provide guided, interactive security testing:
 
+- **apktool** - Android APK unpacking and resource extraction
 - **ffind** - Firmware file analysis with extraction
+- **ghidra** - Automated binary analysis and decompilation
 - **iotnet** - Network traffic analysis
+- **jadx** - Android APK decompilation to Java source
 - **nmap-scan** - Professional network reconnaissance
 - **onvifscan** - ONVIF device security testing
 - **picocom** - UART console interaction

@@ -2,6 +2,22 @@
 
 This guide documents the standard project structure and development patterns used for iothackbot tools.
 
+## Current Tools & Skills
+
+### Full Tools (CLI + Core + Binary)
+- **ffind** - File finder with type detection and filesystem extraction
+- **ghidra** - Binary analysis and decompilation using Ghidra/PyGhidra
+- **iotnet** - IoT network traffic analyzer
+- **onvifscan** - ONVIF device security scanner
+- **wsdiscovery** - WS-Discovery protocol scanner
+
+### Skills Only (Claude Code integration)
+- **apktool** - Android APK unpacking and resource extraction
+- **jadx** - Android APK decompilation to Java source
+- **nmap-scan** - Professional network reconnaissance
+- **picocom** - UART console interaction with helper script
+- **telnetshell** - Telnet shell enumeration with helper script
+
 ## Project Structure Overview
 
 All iothackbot tools follow a consistent architecture separating CLI, core functionality, and shared interfaces.
